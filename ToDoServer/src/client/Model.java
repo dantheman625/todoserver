@@ -3,6 +3,7 @@ package client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -10,6 +11,9 @@ import commons.Message;
 import commons.MessageType;
 import commons.Message_FindUser;
 import commons.Message_LoginSuccess;
+import commons.Message_NewPassword;
+import commons.Message_NewTodo;
+import commons.Message_NewUser;
 import commons.Message_Password;
 import commons.Message_SendContent;
 import commons.ToDo;
@@ -117,6 +121,56 @@ public class Model {
 	}
 	}
 	
+	public void register(String email, String password, String name) {
+		Socket socket = connect();
+		//login taken
+		if (socket != null) {
+			Message msgout = new Message_NewUser(email, password, name);
+			try {
+				msgout.send(socket);
+				Message msgIn = Message.receive(socket);
+				Message_SendContent content = (Message_SendContent) msgIn;
+				currentUser = content.getUser();
+				userTodo = content.getTodoList();
+			} catch (Exception e) {
+				
+			}
+		}
+	}
+	
+	public void newTodo(String email, String title, String description, String todoid, Importance importance, LocalDate dueDate) {
+		Socket socket = connect();
+		if (socket != null) {
+			Message msgout = new Message_NewTodo(email, todoid, title, description, importance);
+			try {
+				msgout.send(socket);
+				Message msgIn = Message.receive(socket);
+				Message_SendContent content = (Message_SendContent) msgIn;
+				currentUser = content.getUser();
+				userTodo = content.getTodoList();
+			} catch (Exception e) {
+				
+			}
+		}
+	}
+	
+	public void accountSettings(String email, String newPassword, String newName) {
+		Socket socket = connect();
+		if (socket != null) {
+			Message msgout = new Message_NewPassword(email, newPassword, newName);
+			try {
+				msgout.send(socket);
+				Message msgIn = Message.receive(socket);
+				Message_SendContent content = (Message_SendContent) msgIn;
+				currentUser = content.getUser();
+				userTodo = content.getTodoList();
+			} catch (Exception e) {
+				
+			}
+		}
+		
+	}
+	
 	public boolean findUser(String email) {
 		boolean userFound=false;
 		for (User u : userlist) {
@@ -143,9 +197,6 @@ public class Model {
 		}
 		
 	}
-	public void addUser(User user) {
-		userlist.add(user);
-	}
 	
 	public String createID() {
 		int id = 0;
@@ -156,7 +207,7 @@ public class Model {
 			duplicate = false;
 			id = rand.nextInt(90000) + 10000;
 			idString = currentUser.getEmail()+id;
-			for (ToDo toDo : wholeList) {
+			for (ToDo toDo : userTodo) {
 				if (toDo.getId().equals(idString)){
 					duplicate = true;
 				}
@@ -167,15 +218,6 @@ public class Model {
 	
 	public boolean checkEmail(String email) {
 		return true;
-	}
-	
-	public boolean existingUser(String email) {
-		boolean existing = false; 
-		for (User u : userlist) {
-			if (u.getEmail().equals(email))
-				existing = true;
-		}
-		return existing;
 	}
 	
 	}

@@ -124,6 +124,7 @@ public class View {
 	
 	public BorderPane homeView() {
 		User item = model.currentUser;
+		todoList.getItems().addAll(model.userTodo);
 		
 		BorderPane topPane = new BorderPane();
 		topPane.setTop(menuBar);

@@ -4,13 +4,22 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Main extends Application{
+	private View view;
+	private Controller controller;
+	private Model model;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception{
-		Model model = new Model();
-		View view = new View(primaryStage, model);
-		Controller controller = new Controller(model, view);
+		model = new Model();
+		view = new View(primaryStage, model);
+		controller = new Controller(model, view);
 		view.start();
+	}
+	
+	@Override
+	public void stop() {
+		if(view!=null)
+			view.stop();
 	}
 
 	public static void main(String[] args) {

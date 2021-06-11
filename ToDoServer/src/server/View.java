@@ -23,4 +23,12 @@ public class View {
 	public void start() {
 		stage.show();
 	}
+	
+	public void stop() {
+		stage.hide();
+	}
+	
+	public Stage getstage() {
+		return stage;
+	}
 }

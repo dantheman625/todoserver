@@ -12,6 +12,9 @@ import commons.Message_Error;
 import commons.Message_FindUser;
 import commons.Message_Hello;
 import commons.Message_LoginSuccess;
+import commons.Message_NewPassword;
+import commons.Message_NewTodo;
+import commons.Message_NewUser;
 import commons.Message_Password;
 import commons.Message_SendContent;
 import commons.Message_UserNotFound;
@@ -65,6 +68,22 @@ public class Client extends Thread{
 			Message_LoginSuccess lc_msg = (Message_LoginSuccess) msgIn;
 			msgOut = new Message_SendContent(model.getCurrentUser(lc_msg.getEmail()),
 					model.userTodos(lc_msg.getEmail()));
+			break;
+		case NewUser:
+			Message_NewUser nu_msg = (Message_NewUser) msgIn;
+			//check if email already used
+			model.addUser(model.createNewUser(nu_msg.getEmail(), nu_msg.getPassword(), nu_msg.getName()));
+			msgOut = new Message_SendContent(model.getCurrentUser(nu_msg.getEmail()), model.userTodos(nu_msg.getEmail()));
+			break;
+		case NewPassword:
+			Message_NewPassword np_msg = (Message_NewPassword) msgIn;
+			model.userSettings(np_msg.getEmail(), np_msg.getNewPassword(), np_msg.getNewName());
+			msgOut = new Message_SendContent(model.getCurrentUser(np_msg.getEmail()), model.userTodos(np_msg.getEmail()));
+			break;
+		case NewTodo:
+			Message_NewTodo nt_msg = (Message_NewTodo) msgIn;
+			model.addTodo(model.createTodo(nt_msg.gettodoId(), nt_msg.getTitle(), nt_msg.getDescription(), nt_msg.getImportance(), nt_msg.getDueDate()));
+			msgOut = new Message_SendContent(model.getCurrentUser(nt_msg.getEmail()), model.userTodos(nt_msg.getEmail()));
 			break;
 		default:
 			msgOut = new Message_Error();

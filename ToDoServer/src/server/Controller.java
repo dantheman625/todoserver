@@ -4,8 +4,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.stage.WindowEvent;
 
 public class Controller {
 	private Model model;
@@ -40,9 +42,17 @@ public class Controller {
 		this.model= model;
 		this.view= view;
 		view.go.setOnAction(this::connect);
+		view.getstage().setOnCloseRequest(this::shutdown);
 	}
 
 	public void connect(ActionEvent event) {
 		new Thread(serverTask).start();
+	}
+	
+	public void shutdown(WindowEvent event) {
+		model.uploadUsers();
+		model.uploadTodos();
+		Platform.exit();
+		System.exit(0);
 	}
 }

@@ -7,6 +7,9 @@ public enum MessageType {
 	UserNotFound,
 	LoginSuccess,
 	SendContent,
+	NewUser,
+	NewPassword,
+	NewTodo,
 	Error;
 	
 	public static MessageType parseType(String typeName) {
@@ -25,6 +28,9 @@ public enum MessageType {
 		else if (msg instanceof Message_UserNotFound) type = UserNotFound;
 		else if (msg instanceof Message_LoginSuccess) type = LoginSuccess;
 		else if (msg instanceof Message_SendContent) type = SendContent;
+		else if (msg instanceof Message_NewUser) type = NewUser;
+		else if(msg instanceof Message_NewPassword) type = NewPassword;
+		else if(msg instanceof Message_NewTodo) type = NewTodo;
 		return type;
 	}
 }

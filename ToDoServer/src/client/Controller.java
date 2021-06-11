@@ -1,6 +1,8 @@
 package client;
 
+import java.time.LocalDate;
 import commons.ToDo;
+import commons.ToDo.Importance;
 import commons.User;
 import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
@@ -24,6 +26,7 @@ public class Controller {
 		view.logout.setOnAction(this::logout);
 		view.accountsettings.setOnAction(this::accountSettingsView);
 		view.deleteTodo.setOnAction(this::deleteTodo);
+		view.updateUser.setOnAction(this::accountSettings);
 	}
 	
 	public void connect(ActionEvent event) {
@@ -73,6 +76,23 @@ public class Controller {
 		
 	}
 	
+	public void accountSettings(ActionEvent event) {
+		String email = model.currentUser.getEmail();
+		String newPassword = null;
+		if (!view.pwField.getText().isEmpty()) {
+			newPassword = view.pwField.getText();
+		}
+		String newName = null;
+		if (!view.nameField.getText().isEmpty()) {
+			newName = view.nameField.getText();
+		}
+		model.accountSettings(email, newPassword, newName);
+		view.pwField.clear();
+		view.nameField.clear();
+		view.getStage().getScene().setRoot(view.homeView());
+		view.stage.sizeToScene();
+	}
+	
 	public void selectTodo(MouseEvent event) {
 		view.selectToDo(view.todoList.getSelectionModel().getSelectedItem());
 		view.stage.sizeToScene();
@@ -93,23 +113,25 @@ public class Controller {
 	public void createTodo(ActionEvent event) {
 		String id = model.createID();
 		if (!id.equals("fail")) {
-			ToDo toDo = new ToDo(id, view.titleField.getText(), view.descField.getText(), view.todoComboBox.getValue());
-			if(view.dueDatePicker.getValue() != null) {
-				//add duedate
-			}
-			model.addTodo(toDo);
+			String email = model.currentUser.getEmail();
+			String title = view.titleField.getText();
+			String description = view.descField.getText();
+			Importance importance = view.todoComboBox.getValue();
+			LocalDate dueDate = null;
+			if(view.dueDatePicker.getValue()!= null)
+				dueDate = view.dueDatePicker.getValue();
+			model.newTodo(email, title, description, id, importance, dueDate);
 		}
-		backHome();
+		view.titleField.clear();
+		view.descField.clear();
+		view.todoComboBox.setValue(null);
+		view.dueDatePicker.setValue(null);
+		view.getStage().getScene().setRoot(view.homeView());
+		view.stage.sizeToScene();
 	}
 	
 	public void register(ActionEvent event) {
-		String email = view.emailField.getText();
-		if (model.checkEmail(email)&& !model.existingUser(email)) {
-			User user = new User(view.nameField.getText(), email, view.pwField.getText());
-			model.addUser(user);
-		}
-		model.findUser(email);
-		model.getUserTodos();
+		model.register(view.emailField.getText(), view.pwField.getText(), view.nameField.getText());
 		view.getStage().getScene().setRoot(view.homeView());
 		view.stage.sizeToScene();
 	}
