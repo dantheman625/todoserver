@@ -56,10 +56,10 @@ public class Model {
 			c.printStackTrace();
 			return;
 		}
-		
+		 
 		todoList = (ArrayList<ToDo>) tddata.get(0);
 	}
-	
+ 
 	public void userSettings(String email, String newPassword, String newName) {
 		User user = getCurrentUser(email);
 		if (!user.getName().equals(newName)&&newName!=null) {
@@ -97,10 +97,12 @@ public class Model {
 		return user;
 	}
 	
-	public ToDo createTodo(String todoId, String title, String description, Importance importance, LocalDate dueDate) {
+	public ToDo createTodo(String todoId, String title, String description, Importance importance, String dueDate) {
 		ToDo toDo = new ToDo(todoId, title, description, importance);
-		if(dueDate != null)
-			toDo.setDueDate(dueDate);
+		if(dueDate != null) {
+			LocalDate ld = LocalDate.parse(dueDate);
+			toDo.setDueDate(ld);
+		} 
 		return toDo;
 	}
 	
@@ -119,6 +121,7 @@ public class Model {
 			for (ToDo item : getTodos()) {
 				if (item.getId().equals(toDo.getId())) {
 					getTodos().remove(item);
+					break;
 				}
 			}
 		}

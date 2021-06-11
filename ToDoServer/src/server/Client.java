@@ -47,7 +47,7 @@ public class Client extends Thread{
 			try { if(clientSocket != null)  clientSocket.close(); } catch (IOException e) {}
 		}
 	}
-	
+ 
 	private Message processMessage(Message msgIn) {
 		logger.info("Message received from client: " + msgIn.toString());
 		String clientName = msgIn.getClient();
@@ -99,5 +99,4 @@ public class Client extends Thread{
 	}
 	
 	
-
 }

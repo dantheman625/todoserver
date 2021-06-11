@@ -1,6 +1,8 @@
 package client;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import commons.ToDo;
 import commons.ToDo.Importance;
 import commons.User;
@@ -27,6 +29,7 @@ public class Controller {
 		view.accountsettings.setOnAction(this::accountSettingsView);
 		view.deleteTodo.setOnAction(this::deleteTodo);
 		view.updateUser.setOnAction(this::accountSettings);
+		view.applysort.setOnAction(this::sortList);
 	}
 	
 	public void connect(ActionEvent event) {
@@ -45,6 +48,10 @@ public class Controller {
 	
 	public void todoList() {
 		view.todoList.getItems().clear();
+	}
+	
+	public void sortList(ActionEvent event) {
+		view.sortList(view.sortBox.getValue());
 	}
 	
 	public void registerView(ActionEvent event) {
@@ -118,9 +125,10 @@ public class Controller {
 			String title = view.titleField.getText();
 			String description = view.descField.getText();
 			Importance importance = view.todoComboBox.getValue();
-			LocalDate dueDate = null;
-			if(view.dueDatePicker.getValue()!= null)
-				dueDate = view.dueDatePicker.getValue();
+			String dueDate = null;
+			if(view.dueDatePicker.getValue()!= null) {
+				dueDate = view.dueDatePicker.getValue().format(DateTimeFormatter.ISO_DATE);
+			}
 			model.newTodo(email, title, description, id, importance, dueDate);
 		}
 		view.titleField.clear();

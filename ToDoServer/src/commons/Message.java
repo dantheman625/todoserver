@@ -21,7 +21,7 @@ public class Message implements Serializable{
 	protected Message() {
 		this.id = -1;
 	}
-	
+	 
 	public void send(Socket s) {
 		if (this.id ==-1) this.id = nextMessageID();
 		

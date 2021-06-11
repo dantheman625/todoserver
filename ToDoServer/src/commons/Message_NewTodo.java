@@ -8,8 +8,7 @@ import commons.ToDo.Importance;
 public class Message_NewTodo extends Message implements Serializable{
 	private static final long serialVersionUID = 1;
 	private Importance importance;
-	private String title, description, todoid ,email;
-	private LocalDate dueDate;
+	private String title, description, todoid ,email, dueDate;
 	
 	public Message_NewTodo(String email, String todoid, String title, String description, Importance importance) {
 		super();
@@ -52,11 +51,11 @@ public class Message_NewTodo extends Message implements Serializable{
 		this.todoid = todoid;
 	}
 
-	public LocalDate getDueDate() {
+	public String getDueDate() {
 		return dueDate;
 	}
 
-	public void setDueDate(LocalDate dueDate) {
+	public void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
 	}
 

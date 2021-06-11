@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import commons.Message;
@@ -28,6 +29,9 @@ public class Model {
 	User currentUser;
 	ArrayList<User> userlist = new ArrayList<User>();
 	ArrayList<ToDo> userTodo = new ArrayList<ToDo>();
+	String sorttime = "Creation Date";
+	String sortaplh = "Alphabetically";
+	String sortimp = "Importance";
 	
 	public Model() {
 		//getUsers();
@@ -43,7 +47,7 @@ public class Model {
 		System.out.println(e);
 	}
 	}
-	
+
 	public Socket connect() {
 		Socket socket = null;
 		try {
@@ -112,9 +116,20 @@ public class Model {
 	}
 	}
 	
-	public ObservableList<ToDo> getObsList(){
+	public ObservableList<ToDo> getObsList(String criteria){
 		ObservableList<ToDo> obsList = FXCollections.observableArrayList();
-		obsList.addAll(userTodo);
+		ArrayList<ToDo> toSort = userTodo;
+		switch (criteria) {
+		case "Creation Date":
+			Collections.sort(toSort, ToDo.timeStampComparator);
+			break;
+		case "Alphabetically":
+			Collections.sort(toSort, ToDo.titleComparator);
+			break;
+		case "Importance":
+			Collections.sort(toSort, ToDo.prioComparator);
+		}
+		obsList.addAll(toSort);
 		return obsList;
 	}
 	
@@ -135,10 +150,12 @@ public class Model {
 		}
 	}
 	
-	public void newTodo(String email, String title, String description, String todoid, Importance importance, LocalDate dueDate) {
+	public void newTodo(String email, String title, String description, String todoid, Importance importance, String dueDate) {
 		Socket socket = connect();
 		if (socket != null) {
-			Message msgout = new Message_NewTodo(email, todoid, title, description, importance);
+			Message_NewTodo msgout = new Message_NewTodo(email, todoid, title, description, importance);
+			if(dueDate != null)
+				msgout.setDueDate(dueDate);
 			try {
 				msgout.send(socket);
 				Message msgIn = Message.receive(socket);

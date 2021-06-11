@@ -18,7 +18,7 @@ public enum MessageType {
 		for (MessageType value : MessageType.values()) {
 			if (value.toString().equals(typeName)) type = value;
 		}
-		return type;
+		return type; 
 	}
 	
 	public static MessageType getType (Message msg) {
