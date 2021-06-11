@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import commons.Message;
 import commons.MessageType;
+import commons.Message_DeleteTodo;
 import commons.Message_Error;
 import commons.Message_FindUser;
 import commons.Message_Hello;
@@ -84,6 +85,11 @@ public class Client extends Thread{
 			Message_NewTodo nt_msg = (Message_NewTodo) msgIn;
 			model.addTodo(model.createTodo(nt_msg.gettodoId(), nt_msg.getTitle(), nt_msg.getDescription(), nt_msg.getImportance(), nt_msg.getDueDate()));
 			msgOut = new Message_SendContent(model.getCurrentUser(nt_msg.getEmail()), model.userTodos(nt_msg.getEmail()));
+			break;
+		case DeleteTodo:
+			Message_DeleteTodo dt_msg = (Message_DeleteTodo) msgIn;
+			model.deleteTodo(dt_msg.getTodoid());
+			msgOut = new Message_SendContent(model.getCurrentUser(dt_msg.getEmail()), model.userTodos(dt_msg.getEmail()));
 			break;
 		default:
 			msgOut = new Message_Error();

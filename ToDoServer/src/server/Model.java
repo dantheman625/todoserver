@@ -104,6 +104,26 @@ public class Model {
 		return toDo;
 	}
 	
+	public ToDo findTodo(String todoid) {
+		ToDo toDo = null;
+		for (ToDo item : getTodos()) {
+			if (item.getId().equals(todoid))
+				toDo = item;
+		}
+		return toDo;
+	}
+	
+	public void deleteTodo(String todoid) {
+		ToDo toDo = findTodo(todoid);
+		if (toDo != null) {
+			for (ToDo item : getTodos()) {
+				if (item.getId().equals(toDo.getId())) {
+					getTodos().remove(item);
+				}
+			}
+		}
+	}
+	
 	public void addTodo(ToDo todo) {
 		todoList.add(todo);
 	}

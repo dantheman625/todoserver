@@ -38,15 +38,13 @@ public class Controller {
 		backHome();
 	}
 	
-	public void backHome() {
-		view.todoList.getItems().clear();
+	public void backHome() {		
 		view.getStage().getScene().setRoot(view.homeView());
-		todoList();
 		view.stage.sizeToScene();
 	}
 	
 	public void todoList() {
-		view.todoList.getItems().addAll(model.userTodo);
+		view.todoList.getItems().clear();
 	}
 	
 	public void registerView(ActionEvent event) {
@@ -99,10 +97,13 @@ public class Controller {
 	}
 	
 	public void deleteTodo(ActionEvent event) {
-		ToDo toDo = view.todoList.getSelectionModel().getSelectedItem();
-		model.deleteTodo(toDo);
-		model.getUserTodos();
-		backHome();
+		String todoid = null;
+		todoid = view.todoList.getSelectionModel().getSelectedItem().getId();
+		if(todoid != null) {
+			model.deleteTodo(todoid);
+		}
+		view.getStage().getScene().setRoot(view.homeView());
+		view.stage.sizeToScene();
 	}
 	
 	public void createTodoView(ActionEvent event) {

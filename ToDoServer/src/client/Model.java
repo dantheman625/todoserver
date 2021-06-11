@@ -9,6 +9,7 @@ import java.util.Random;
 
 import commons.Message;
 import commons.MessageType;
+import commons.Message_DeleteTodo;
 import commons.Message_FindUser;
 import commons.Message_LoginSuccess;
 import commons.Message_NewPassword;
@@ -19,11 +20,13 @@ import commons.Message_SendContent;
 import commons.ToDo;
 import commons.ToDo.Importance;
 import commons.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Model {
+	//currentUser is my token
 	User currentUser;
 	ArrayList<User> userlist = new ArrayList<User>();
-	ArrayList<ToDo> wholeList = new ArrayList<ToDo>();
 	ArrayList<ToDo> userTodo = new ArrayList<ToDo>();
 	
 	public Model() {
@@ -50,20 +53,8 @@ public class Model {
 		}
 		return socket;
 	}
+
 	
-	public void getToDos() {
-		wholeList.add(new ToDo("admin1", "Wäsche", "Tumbler alles", Importance.Low));
-		wholeList.add(new ToDo("admin1", "Kkochen", "Spaghetti", Importance.High));
-		wholeList.add(new ToDo("admin2", "Rasenmähen", "Mit alles ohne Zwiebel", Importance.Medium));
-	}
-	
-	public void getUserTodos() {
-		userTodo.clear();
-		for (ToDo todo : wholeList) {
-			if (todo.getId().contains(currentUser.getEmail()))
-				userTodo.add(todo);
-		}
-	}
 	
 	public void logout() {
 		userTodo.clear();
@@ -119,6 +110,12 @@ public class Model {
 			
 		}
 	}
+	}
+	
+	public ObservableList<ToDo> getObsList(){
+		ObservableList<ToDo> obsList = FXCollections.observableArrayList();
+		obsList.addAll(userTodo);
+		return obsList;
 	}
 	
 	public void register(String email, String password, String name) {
@@ -183,16 +180,19 @@ public class Model {
 		return userFound;
 	}
 	
-	public void addTodo(ToDo item) {
-		wholeList.add(item);
-		getUserTodos();
-	}
 	
-	public void deleteTodo(ToDo item) {
-		for(ToDo todo : wholeList) {
-			if(todo.getId().equals(item.getId())) {
-				wholeList.remove(todo);
-				break;
+	public void deleteTodo(String todoid) {
+		Socket socket = connect();
+		if (socket != null) {
+			Message msgout = new Message_DeleteTodo(currentUser.getEmail(), todoid);
+			try {
+				msgout.send(socket);
+				Message msgIn = Message.receive(socket);
+				Message_SendContent content = (Message_SendContent) msgIn;
+				currentUser = content.getUser();
+				userTodo = content.getTodoList();
+			} catch (Exception e) {
+				
 			}
 		}
 		

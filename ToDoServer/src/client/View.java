@@ -3,12 +3,14 @@ package client;
 import commons.ToDo;
 import commons.ToDo.Importance;
 import commons.User;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -19,6 +21,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class View {
 	Stage stage;
@@ -60,7 +63,7 @@ public class View {
 	Label tdprio;
 	Label tdDesc;
 	Label tdDuedate;
-	ListView<ToDo> todoList = new ListView<ToDo>();
+	ListView<ToDo> todoList;
 	
 	//Todo
 	TextField titleField;
@@ -78,6 +81,26 @@ public class View {
 	public View(Stage primaryStage, Model model) {
 		stage=primaryStage;
 		this.model=model;
+		todoList = new ListView<ToDo>();
+		todoList.setCellFactory(new Callback<ListView<ToDo>, ListCell<ToDo>>() {
+	    	
+	    	@Override
+	    	public ListCell<ToDo> call(ListView<ToDo> param) {
+	    		final ListCell<ToDo> cell = new ListCell<ToDo>() {
+	    			
+	    			@Override
+	    			protected void updateItem(ToDo item, boolean empty) {
+	    				super.updateItem(item, empty);
+	    				if (item != null) {
+	    					setText(item.getTitle());
+	    				}
+	    				else {
+	    					setText(null);
+	    				}
+	    			}
+	    		};
+	    		return cell;
+	    	}});
 		Label port = new Label("Port");
 		Label ip = new Label("IP-Address");
 		
@@ -124,7 +147,8 @@ public class View {
 	
 	public BorderPane homeView() {
 		User item = model.currentUser;
-		todoList.getItems().addAll(model.userTodo);
+		todoList.getItems().clear();
+		todoList.getItems().addAll(model.getObsList());
 		
 		BorderPane topPane = new BorderPane();
 		topPane.setTop(menuBar);
@@ -217,7 +241,8 @@ public class View {
 		HBox duedateBox = new HBox(ctdduedate, dueDatePicker);
 		
 		HBox buttonBox = new HBox(back, addTodo);
-		
+		addTodo.disableProperty().bind(Bindings.isEmpty(titleField.textProperty())
+				.or(Bindings.isEmpty(descField.textProperty()).or(Bindings.isNull(todoComboBox.valueProperty()))));
 		VBox topBox = new VBox(titleBox, tdtitBox, prioBox, desctitle, descBox, duedateBox, buttonBox);
 		return topBox;
 	}
