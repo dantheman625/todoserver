@@ -50,7 +50,7 @@ public class View {
 	TextField emailField = new TextField();
 	
 	Button registerButton = new Button("Register");
-	Button toLoginButton = new Button("Login");
+	Button toLoginButton = new Button("Back to Login");
 	
 	//Menu Items Home
 	MenuBar menuBar = new MenuBar();
@@ -124,8 +124,9 @@ public class View {
 		Label ip = new Label("IP-Address");
 		
 		TextField portField = new TextField();
+		portField.setDisable(true);
 		TextField ipField = new TextField();
-		
+		ipField.setDisable(true);
 		
 		HBox portBox = new HBox(port, portField);
 		HBox ipBox = new HBox(ip, ipField);
@@ -146,12 +147,16 @@ public class View {
 		Label login = new Label("Login");
 		login.getStyleClass().add("titlelabel");
 		HBox loginBox = new HBox(login);
+		loginBox.getStyleClass().add("centerbox");
 		userField.clear();
 		HBox userBox = new HBox(userLabel, userField);
 		pwField.clear();
 		HBox pwBox = new HBox(pwLabel, pwField);
 		
 		HBox buttonBox = new HBox(toregisButton, loginButton);
+		buttonBox.getStyleClass().add("buttonbox");
+		
+		loginButton.disableProperty().bind(Bindings.isEmpty(userField.textProperty()).or(Bindings.isEmpty(pwField.textProperty())));
 		
 		VBox topBox = new VBox(loginBox, userBox, pwBox, buttonBox);
 		topBox.getStyleClass().add("box");
@@ -174,10 +179,12 @@ public class View {
 		tdSortby = new Label("Sort by: ");
 		
 		HBox sortHBox = new HBox(tdSortby, sortBox, applysort);
+		sortHBox.getStyleClass().add("buttonbox");
 		
 		VBox listBox = new VBox(todoList);
 		
 		tdTitle = new Label(" ");
+		tdTitle.getStyleClass().add("titlelabel");
 		HBox titleBox = new HBox(tdTitle);
 		
 		tdprio = new Label(" ");
@@ -190,8 +197,10 @@ public class View {
 		HBox dueBox = new HBox(tdDuedate);
 		
 		VBox contentBox = new VBox(titleBox, prioBox, descBox, dueBox);
+		contentBox.getStyleClass().add("contentbox");
 		
 		HBox centerBox = new HBox(listBox, contentBox);
+		centerBox.getStyleClass().add("contentbox");
 		
 		VBox topBox = new VBox(helloBox, sortHBox, centerBox);
 		topBox.getStyleClass().add("box");
@@ -220,6 +229,10 @@ public class View {
 		HBox pwBox = new HBox(pwLabel, pwField);
 		
 		HBox buttonBox = new HBox(toLoginButton, registerButton);
+		buttonBox.getStyleClass().add("buttonbox");
+		
+		registerButton.disableProperty().bind(Bindings.isEmpty(nameField.textProperty()).or(Bindings.isEmpty(emailField.textProperty()))
+				.or(Bindings.isEmpty(pwField.textProperty())));
 		
 		VBox topBox = new VBox(titleBox, nameBox,emailBox, pwBox, buttonBox);
 		topBox.getStyleClass().add("box");
@@ -240,6 +253,7 @@ public class View {
 		HBox pwBox = new HBox(pwLabel, pwField);
 		
 		HBox buttonBox = new HBox(back, updateUser);
+		buttonBox.getStyleClass().add("buttonbox");
 		
 		VBox topBox = new VBox(titleBox, nameBox, pwBox, buttonBox);
 		topBox.getStyleClass().add("box");
@@ -272,13 +286,15 @@ public class View {
 		descField = new TextField();
 		HBox descBox = new HBox(descField);
 		
+		HBox dueTitle = new HBox(ctdduedate);
+		
 		dueDatePicker = new DatePicker();
-		HBox duedateBox = new HBox(ctdduedate, dueDatePicker);
+		HBox duedateBox = new HBox(dueDatePicker);
 		
 		HBox buttonBox = new HBox(back, addTodo);
 		addTodo.disableProperty().bind(Bindings.isEmpty(titleField.textProperty())
 				.or(Bindings.isEmpty(descField.textProperty()).or(Bindings.isNull(todoComboBox.valueProperty()))));
-		VBox topBox = new VBox(titleBox, tdtitBox, prioBox, desctitle, descBox, duedateBox, buttonBox);
+		VBox topBox = new VBox(titleBox, tdtitBox, prioBox, desctitle, descBox, dueTitle, duedateBox, buttonBox);
 		topBox.getStyleClass().add("box");
 		return topBox;
 	}
@@ -297,6 +313,18 @@ public class View {
 	public void wrongPassword() {
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setContentText("Wrong Password");
+		alert.showAndWait();
+	}
+	
+	public void emailTaken() {
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setContentText("Email already taken");
+		alert.showAndWait();
+	}
+	
+	public void emailNotCorrect() {
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setContentText("This email is not valid");
 		alert.showAndWait();
 	}
 	

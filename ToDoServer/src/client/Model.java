@@ -64,13 +64,23 @@ public class Model {
 		userTodo.clear();
 	}
 	
-	
-	public boolean loginCheck(String password) {
-		if(password.equals(currentUser.getPassword())) {
-			return true;
-		} else {
-			return false;
+	public boolean validateEmail (String email) {
+		boolean valid = false;
+		String[] addressParts = email.split("@");
+		if (addressParts.length == 2 && !addressParts[0].isEmpty() && !addressParts[1].isEmpty()) {
+			
+			if (addressParts[1].charAt(addressParts[1].length() - 1) != '.') {
+				
+				String[] domainParts = addressParts[1].split("\\.");
+				if (domainParts.length >= 2) {
+					valid = true;
+					for (String s : domainParts) {
+						if (s.length() < 2) valid = false;
+					}
+				}
+			}
 		}
+		return valid;
 	}
 	
 	public String checkPassword(String email, String password) {
@@ -133,21 +143,27 @@ public class Model {
 		return obsList;
 	}
 	
-	public void register(String email, String password, String name) {
+	public boolean register(String email, String password, String name) {
 		Socket socket = connect();
+		boolean registered = true;
 		//login taken
 		if (socket != null) {
 			Message msgout = new Message_NewUser(email, password, name);
 			try {
 				msgout.send(socket);
 				Message msgIn = Message.receive(socket);
+				if(MessageType.getType(msgIn)==MessageType.SendContent) {
 				Message_SendContent content = (Message_SendContent) msgIn;
 				currentUser = content.getUser();
 				userTodo = content.getTodoList();
+				} else if (MessageType.getType(msgIn)==MessageType.EmailTaken) {
+					registered = false;
+				}
 			} catch (Exception e) {
 				
 			}
 		}
+		return registered;
 	}
 	
 	public void newTodo(String email, String title, String description, String todoid, Importance importance, String dueDate) {
@@ -185,19 +201,6 @@ public class Model {
 		
 	}
 	
-	public boolean findUser(String email) {
-		boolean userFound=false;
-		for (User u : userlist) {
-			if(u.getEmail().equals(email)) {
-				currentUser=u;
-				userFound = true;
-				break;
-			} 
-		}
-		return userFound;
-	}
-	
-	
 	public void deleteTodo(String todoid) {
 		Socket socket = connect();
 		if (socket != null) {
@@ -223,7 +226,7 @@ public class Model {
 		while (id == 0 || duplicate == true) {
 			duplicate = false;
 			id = rand.nextInt(90000) + 10000;
-			idString = currentUser.getEmail()+id;
+			idString = currentUser.getEmail()+ "," + id;
 			for (ToDo toDo : userTodo) {
 				if (toDo.getId().equals(idString)){
 					duplicate = true;

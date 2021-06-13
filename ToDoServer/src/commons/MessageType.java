@@ -11,6 +11,7 @@ public enum MessageType {
 	NewPassword,
 	NewTodo,
 	DeleteTodo,
+	EmailTaken,
 	Error;
 	
 	public static MessageType parseType(String typeName) {
@@ -33,6 +34,7 @@ public enum MessageType {
 		else if(msg instanceof Message_NewPassword) type = NewPassword;
 		else if(msg instanceof Message_NewTodo) type = NewTodo;
 		else if (msg instanceof Message_DeleteTodo) type = DeleteTodo;
+		else if (msg instanceof Message_EmailTaken) type = EmailTaken;
 		return type;
 	}
 }

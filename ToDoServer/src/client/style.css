@@ -18,4 +18,15 @@
 	-fx-padding: 10px;
     -fx-alignment: center;
     -fx-border-spacing: 10px;
+    -fx-spacing: 15px;
     }
+.centerbox{
+	-fx-alignment: center;
+}
+.buttonbox{
+	-fx-alignment: center;
+	-fx-spacing: 20px;
+}
+.contentbox{
+	-fx-spacing: 10px;
+}

@@ -157,7 +157,9 @@ public class Model {
 	public ArrayList<ToDo> userTodos(String email){
 		ArrayList<ToDo> userTodo = new ArrayList<ToDo>();
 		for (ToDo todo : getTodos()) {
-			if (todo.getId().contains(email))
+			String check = todo.getId();
+			String [] temp = check.split("\\,");
+			if (temp[0].equals(email))
 				userTodo.add(todo);
 		}
 		return userTodo;

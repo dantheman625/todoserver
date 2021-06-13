@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import commons.Message;
 import commons.MessageType;
 import commons.Message_DeleteTodo;
+import commons.Message_EmailTaken;
 import commons.Message_Error;
 import commons.Message_FindUser;
 import commons.Message_Hello;
@@ -72,9 +73,12 @@ public class Client extends Thread{
 			break;
 		case NewUser:
 			Message_NewUser nu_msg = (Message_NewUser) msgIn;
-			//check if email already used
-			model.addUser(model.createNewUser(nu_msg.getEmail(), nu_msg.getPassword(), nu_msg.getName()));
-			msgOut = new Message_SendContent(model.getCurrentUser(nu_msg.getEmail()), model.userTodos(nu_msg.getEmail()));
+			if (!model.userFound(nu_msg.getEmail())) {
+				model.addUser(model.createNewUser(nu_msg.getEmail(), nu_msg.getPassword(), nu_msg.getName()));
+				msgOut = new Message_SendContent(model.getCurrentUser(nu_msg.getEmail()), model.userTodos(nu_msg.getEmail()));
+			} else {
+				msgOut = new Message_EmailTaken();
+			}
 			break;
 		case NewPassword:
 			Message_NewPassword np_msg = (Message_NewPassword) msgIn;

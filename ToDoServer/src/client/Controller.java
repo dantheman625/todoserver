@@ -56,6 +56,9 @@ public class Controller {
 	
 	public void registerView(ActionEvent event) {
 		view.getStage().getScene().setRoot(view.registerView());
+		view.nameField.clear();
+		view.emailField.clear();
+		view.pwField.clear();
 		view.stage.sizeToScene();
 	}
 	
@@ -140,9 +143,17 @@ public class Controller {
 	}
 	
 	public void register(ActionEvent event) {
-		model.register(view.emailField.getText(), view.pwField.getText(), view.nameField.getText());
+		if(model.validateEmail(view.emailField.getText())) {
+		if (model.register(view.emailField.getText(), view.pwField.getText(), 
+				view.nameField.getText())) {
 		view.getStage().getScene().setRoot(view.homeView());
 		view.stage.sizeToScene();
+		} else {
+			view.emailTaken();
+		}
+		} else {
+			view.emailNotCorrect();
+		}
 	}
 	
 	public void logout(ActionEvent event) {
